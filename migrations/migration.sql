@@ -90,3 +90,5 @@ CREATE INDEX idx_tasks_cr_id ON tasks(customer_id)
 CREATE INDEX idx_tasks_er_id ON tasks(executor_id)
 
 CREATE INDEX idx_tasks_status ON tasks(status)
+
+CREATE UNIQUE INDEX idx_bids_unique_accepted ON bids(status) WHERE status = 'accepted' 
