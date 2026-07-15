@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deleted_at TIMESTAMPTZ NULL
-)
+);
 
 
 CREATE TABLE IF NOT EXISTS deleted_users (
@@ -14,8 +14,7 @@ CREATE TABLE IF NOT EXISTS deleted_users (
   balance NUMERIC(10, 2) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL,
   deleted_at TIMESTAMPTZ NOT NULL DEFAULT now()
-)
-
+);
 
 
 
@@ -26,13 +25,13 @@ BEGIN
   RETURN NEW;
 END;
 $$
-LANGUAGE plpgsql
+LANGUAGE plpgsql;
 
 
 
 CREATE TRIGGER trg_users_update
   BEFORE UPDATE ON users
-  FOR EACH ROW EXECUTE FUNCTION fnc_update_at()
+  FOR EACH ROW EXECUTE FUNCTION fnc_update_at();
 
 
 
@@ -47,13 +46,13 @@ BEGIN
   RETURN NEW;
 END;
 $$
-LANGUAGE plpgsql
+LANGUAGE plpgsql;
 
 
 CREATE TRIGGER trg_users_archive
   AFTER UPDATE OF deleted_at ON users
   FOR EACH ROW
-  EXECUTE FUNCTION fnc_archive_user_on_delete()
+  EXECUTE FUNCTION fnc_archive_user_on_delete();
 
 
 
@@ -61,13 +60,13 @@ CREATE TRIGGER trg_users_archive
 CREATE TABLE IF NOT EXISTS customers (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id BIGINT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE
-)
+);
 
 
 CREATE TABLE IF NOT EXISTS executors (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id BIGINT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE
-)
+);
 
 
 
@@ -91,7 +90,7 @@ BEGIN
   RETURN NEW;
 END;
 $$
-LANGUAGE plpgsql
+LANGUAGE plpgsql;
 
 
 
@@ -103,23 +102,23 @@ CREATE TABLE IF NOT EXISTS tasks (
   title VARCHAR(40) NOT NULL,
   description TEXT NOT NULL,
   status TEXT NOT NULL CHECK (status IN ('published', 'in_progress', 'canceled', 'on_review', 'completed', 'revision')),
-  accepted_bid_id BIGINT UNIQUE,  
+  accepted_bid_id BIGINT UNIQUE REFERENCES bids(id),  
   deadline TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-)
+);
 
 
 CREATE TRIGGER trg_tasks_update
   BEFORE UPDATE ON tasks
-  FOR EACH ROW EXECUTE FUNCTION fnc_update_at()
+  FOR EACH ROW EXECUTE FUNCTION fnc_update_at();
 
 
 
 CREATE TRIGGER trg_tasks_status_check
   BEFORE UPDATE OF status ON tasks
   FOR EACH ROW
-  EXECUTE FUNCTION fnc_check_task_status_update()
+  EXECUTE FUNCTION fnc_check_task_status_update();
 
 
 CREATE TABLE IF NOT EXISTS bids (
@@ -130,13 +129,13 @@ CREATE TABLE IF NOT EXISTS bids (
   status TEXT NOT NULL CHECK (status IN ('pending', 'rejected', 'accepted')),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-)
+);
 
 
 
 CREATE TRIGGER trg_bids_update
   BEFORE UPDATE ON bids
-  FOR EACH ROW EXECUTE FUNCTION fnc_update_at()
+  FOR EACH ROW EXECUTE FUNCTION fnc_update_at();
 
 
 
@@ -156,14 +155,14 @@ CREATE TABLE IF NOT EXISTS transactions (
   status TEXT NOT NULL CHECK ( status IN ('hold', 'paid', 'returned')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-)
+);
 
 
 
 
 CREATE TRIGGER trg_transaction_update
   BEFORE UPDATE ON transactions
-  FOR EACH ROW EXECUTE FUNCTION fnc_update_at()
+  FOR EACH ROW EXECUTE FUNCTION fnc_update_at();
 
 
 
@@ -176,33 +175,30 @@ CREATE TABLE IF NOT EXISTS user_balance (
   task_id BIGINT REFERENCES tasks(id),
   description TEXT,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-)
+);
 
 
 
 
-CREATE INDEX IF NOT EXISTS idx_transaction_task ON transactions(task_id)
+CREATE INDEX IF NOT EXISTS idx_transaction_task ON transactions(task_id);
 
 
-CREATE INDEX IF NOT EXISTS idx_transaction_status ON transactions(status)
+CREATE INDEX IF NOT EXISTS idx_transaction_status ON transactions(status);
 
 
-CREATE INDEX IF NOT EXISTS idx_bids_task ON bids(task_id)
+CREATE INDEX IF NOT EXISTS idx_bids_task ON bids(task_id);
 
 
-CREATE INDEX IF NOT EXISTS idx_bids_status ON bids(status)
+CREATE INDEX IF NOT EXISTS idx_bids_status ON bids(status);
 
 
-CREATE INDEX IF NOT EXISTS idx_tasks_cr_id ON tasks(customer_id)
+CREATE INDEX IF NOT EXISTS idx_tasks_cr_id ON tasks(customer_id);
 
 
-CREATE INDEX IF NOT EXISTS idx_tasks_er_id ON tasks(executor_id)
+CREATE INDEX IF NOT EXISTS idx_tasks_er_id ON tasks(executor_id);
 
 
-CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 
 
-CREATE INDEX IF NOT EXISTS idx_user_deleted ON users(deleted_at) WHERE deleted_at IS NULL
-
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_bids_unique_accepted ON bids(user_id) WHERE status = 'accepted'
+CREATE INDEX IF NOT EXISTS idx_user_deleted ON users(deleted_at) WHERE deleted_at IS NULL;
