@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS tasks (
             'revision'
         )
     ),
-    accepted_bid_id BIGINT UNIQUE, 
+    accepted_bid_id BIGINT UNIQUE REFERENCES bids (id),
     deadline TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
