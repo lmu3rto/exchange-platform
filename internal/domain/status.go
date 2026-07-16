@@ -11,10 +11,10 @@ const (
 	TaskStatusRevision   TaskStatus = "revision"
 
 	BidsStatusPending  TaskStatus = "pending"
-	BidsStatusRejected   TaskStatus = "rejected"
-	BidsStatusAccepted   TaskStatus = "accepted"
+	BidsStatusRejected TaskStatus = "rejected"
+	BidsStatusAccepted TaskStatus = "accepted"
 
-	TransactionStatusHold TaskStatus = "hold"
-	TransactionStatusPaid TaskStatus = "paid"
+	TransactionStatusHold     TaskStatus = "hold"
+	TransactionStatusPaid     TaskStatus = "paid"
 	TransactionStatusReturned TaskStatus = "returned"
 )
