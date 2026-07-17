@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS tasks (
             'revision'
         )
     ),
-    accepted_bid_id BIGINT UNIQUE REFERENCES bids (id),
+    accepted_bid_id BIGINT UNIQUE,
     deadline TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 CREATE TRIGGER trg_transaction_update BEFORE UPDATE ON transactions
 FOR EACH ROW EXECUTE FUNCTION fnc_update_at();
 
-CREATE TABLE IF NOT EXISTS user_balance (
+CREATE TABLE IF NOT EXISTS wallet_transactions (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users (id),
     amount NUMERIC(10, 2) NOT NULL,
@@ -134,11 +134,11 @@ CREATE TABLE IF NOT EXISTS user_balance (
 ALTER TABLE tasks ADD CONSTRAINT fk_tasks_bid FOREIGN KEY (accepted_bid_id) REFERENCES bids (id) ON DELETE SET NULL NOT VALID;
 ALTER TABLE tasks VALIDATE CONSTRAINT fk_tasks_bid;
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_transaction_task ON transactions (task_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_transaction_status ON transactions (status);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_bids_task ON bids (task_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_bids_status ON bids (status);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_tasks_cr_id ON tasks (customer_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_tasks_er_id ON tasks (executor_id);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_tasks_status ON tasks (status);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_user_deleted ON users (deleted_at) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_transaction_task ON transactions (task_id);
+CREATE INDEX IF NOT EXISTS idx_transaction_status ON transactions (status);
+CREATE INDEX IF NOT EXISTS idx_bids_task ON bids (task_id);
+CREATE INDEX IF NOT EXISTS idx_bids_status ON bids (status);
+CREATE INDEX IF NOT EXISTS idx_tasks_cr_id ON tasks (customer_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_er_id ON tasks (executor_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks (status);
+CREATE INDEX IF NOT EXISTS idx_user_deleted ON users (deleted_at) WHERE deleted_at IS NULL;
