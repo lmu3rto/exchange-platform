@@ -13,4 +13,3 @@ func NewHandler(us *service.UserService) (*Handler) {
 		userService: us,
 	}
 }
-
