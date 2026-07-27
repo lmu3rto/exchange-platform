@@ -1,14 +1,14 @@
-package domain
+package models
 
 import "time"
 
 type User struct {
 	ID        int64     `json:"id"`
-	Name      string    `json:"user_name"`
+	UserName  string    `json:"user_name"`
 	Balance   float64   `json:"balance"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	DeletedAt time.Time `json:"deleted_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
 type DeletedUser struct {
@@ -16,7 +16,7 @@ type DeletedUser struct {
 	Name      string    `json:"user_name"`
 	Balance   float64   `json:"balance"`
 	CreatedAt time.Time `json:"created_at"`
-	DeletedAt time.Time `json:"deleted_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
 type Customer struct {
@@ -37,7 +37,7 @@ type Task struct {
 	Description   string     `json:"description"`
 	Status        TaskStatus `json:"status"`
 	AcceptedBidID int64      `json:"accepted_bid_id"`
-	Deadline      time.Time  `json:"deadline"`
+	Deadline      *time.Time  `json:"deadline"`
 	CreatedAt     time.Time  `json:"created_at"`
 	UpdatedAt     time.Time  `json:"updated_at"`
 }
