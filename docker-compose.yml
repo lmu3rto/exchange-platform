@@ -1,5 +1,15 @@
 
 services:
+  backend:
+    build: .
+
+    ports:
+    - "8080:8080"
+
+    depends_on:
+    - database
+    environment:
+      DATABASE_URL: postgres://mu3rto:platform_password@database:5432/exchange_platform?sslmode=disable
   database:
     image: postgres:18-alpine
     environment:

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/lmu3rto/exchange-platform/internal/database"
 	"github.com/lmu3rto/exchange-platform/internal/handler"
@@ -10,9 +11,14 @@ import (
 	"github.com/lmu3rto/exchange-platform/internal/service"
 )
 
-const databaseURL string = "postgres://mu3rto:platform_password@localhost:5432/exchange_platform?sslmode=disable"
 
 func main() {
+	databaseURL := os.Getenv("DATABASE_URL")
+
+	if databaseURL == "" {
+		log.Fatal("DATABASE_URL is not set")
+	}
+	
 	db, err := database.New(databaseURL)
 
 	if err != nil {
