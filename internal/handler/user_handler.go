@@ -9,11 +9,18 @@ import (
 	"github.com/lmu3rto/exchange-platform/internal/domain/models"
 	"github.com/lmu3rto/exchange-platform/internal/handler/dto"
 	"github.com/lmu3rto/exchange-platform/internal/service"
+	"strings"
 )
 
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
+
+var (
+	ErrNameLong  = errors.New("Name is too long")
+	ErrNameShort = errors.New("Name is too short")
+	ErrNameEmpty = errors.New("Name is empty")
+)
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -26,6 +33,16 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		writeError(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
+	switch {
+	case strings.TrimSpace(req.UserName) == "":
+		writeError(w, "Invalid user name - empty", http.StatusBadRequest)
+
+	case len(strings.TrimSpace(req.UserName)) > 30:
+		writeError(w, "Name is too long", http.StatusBadRequest)
+
+	case len(strings.TrimSpace(req.UserName)) < 3:
+		writeError(w, "Name is too short", http.StatusBadRequest)
+	}
 
 	user := models.User{
 		UserName: req.UserName,
@@ -35,12 +52,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrNameEmpty):
-			writeError(w, "Invalid user name - empty", http.StatusBadRequest)
-		case errors.Is(err, service.ErrNameLong):
-			writeError(w, "Name is too long", http.StatusBadRequest)
-		case errors.Is(err, service.ErrNameShort):
-			writeError(w, "Name is too short", http.StatusBadRequest)
 		case errors.Is(err, service.ErrUserAlreadyExists):
 			writeError(w, "Name already exists", http.StatusConflict)
 		default:

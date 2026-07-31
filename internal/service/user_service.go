@@ -21,24 +21,9 @@ func NewUserService(r UserRepository) *UserService {
 
 var (
 	ErrUserAlreadyExists = errors.New("User already exists")
-	ErrNameLong          = errors.New("Name is too long")
-	ErrNameShort         = errors.New("Name is too short")
-	ErrNameEmpty         = errors.New("Name is empty")
 )
 
 func (s *UserService) Create(ctx context.Context, user *models.User) (*models.User, error) {
-
-	if strings.TrimSpace(user.UserName) == "" {
-		return nil, ErrNameEmpty
-	}
-
-	if len(strings.TrimSpace(user.UserName)) > 30 {
-		return nil, ErrNameLong
-	}
-
-	if len(strings.TrimSpace(user.UserName)) < 3 {
-		return nil, ErrNameShort
-	}
 
 	name, err := s.repo.GetByName(ctx, strings.TrimSpace(user.UserName))
 
