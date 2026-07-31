@@ -36,12 +36,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case strings.TrimSpace(req.UserName) == "":
 		writeError(w, "Invalid user name - empty", http.StatusBadRequest)
+		return
 
 	case len(strings.TrimSpace(req.UserName)) > 30:
 		writeError(w, "Name is too long", http.StatusBadRequest)
+		return
 
 	case len(strings.TrimSpace(req.UserName)) < 3:
 		writeError(w, "Name is too short", http.StatusBadRequest)
+		return
 	}
 
 	user := models.User{
