@@ -2,14 +2,14 @@ package handler
 
 import (
 	"github.com/lmu3rto/exchange-platform/internal/service"
-
 )
+
 type Handler struct {
-	userService *service.UserService
+	userService service.UserRepository
 }
 
-func NewHandler(us *service.UserService) (*Handler) {
-	return &Handler {
+func NewHandler(us service.UserRepository) *Handler {
+	return &Handler{
 		userService: us,
 	}
 }

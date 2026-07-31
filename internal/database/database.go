@@ -1,13 +1,12 @@
 package database
 
-
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func New(databaseURL string) (*pgxpool.Pool, error) {
-	
+
 	pool, err := pgxpool.New(context.Background(), databaseURL)
 
 	if err != nil {

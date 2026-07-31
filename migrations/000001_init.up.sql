@@ -3,8 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
     user_name VARCHAR(30) NOT NULL,
     balance NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    deleted_at TIMESTAMPTZ NULL
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS deleted_users (

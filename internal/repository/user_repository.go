@@ -2,11 +2,16 @@ package repository
 
 import (
 	"context"
-	"github.com/lmu3rto/exchange-platform/internal/domain/models"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"database/sql"
+	"errors"
+
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/lmu3rto/exchange-platform/internal/domain/models"
+)
 
-
+var (
+	ErrUserNotFound = errors.New("User not found")
 )
 
 type UserRepository struct {
@@ -14,7 +19,7 @@ type UserRepository struct {
 }
 
 func NewUserRepository(db *pgxpool.Pool) *UserRepository {
-	return &UserRepository {
+	return &UserRepository{
 		db: db,
 	}
 }
@@ -32,6 +37,11 @@ func userScan(row pgx.Row) (*models.User, error) {
 	)
 
 	if err != nil {
+
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+
 		return nil, err
 	}
 
@@ -39,7 +49,7 @@ func userScan(row pgx.Row) (*models.User, error) {
 }
 
 func (r *UserRepository) Create(ctx context.Context, user *models.User) (*models.User, error) {
-		query := `
+	query := `
 		INSERT INTO users (user_name)
 		VALUES($1)
 		RETURNING 
@@ -107,7 +117,8 @@ func (r *UserRepository) Update(ctx context.Context, user *models.User) (*models
 
 func (r *UserRepository) Delete(ctx context.Context, user *models.User) (*models.User, error) {
 	query := `
-		DELETE users
+		DELETE
+		FROM users
 		WHERE id = $1
 		RETURNING 
 	    id,

@@ -1,6 +1,8 @@
 package models
 
 type TaskStatus string
+type BidStatus string
+type TransactionStatus string
 
 const (
 	TaskStatusPublished  TaskStatus = "published"
@@ -9,12 +11,16 @@ const (
 	TaskStatusOnReview   TaskStatus = "on_review"
 	TaskStatusCompleted  TaskStatus = "completed"
 	TaskStatusRevision   TaskStatus = "revision"
+)
 
-	BidsStatusPending  TaskStatus = "pending"
-	BidsStatusRejected TaskStatus = "rejected"
-	BidsStatusAccepted TaskStatus = "accepted"
+const (
+	TransactionStatusHold     TransactionStatus = "hold"
+	TransactionStatusPaid     TransactionStatus = "paid"
+	TransactionStatusReturned TransactionStatus = "returned"
+)
 
-	TransactionStatusHold     TaskStatus = "hold"
-	TransactionStatusPaid     TaskStatus = "paid"
-	TransactionStatusReturned TaskStatus = "returned"
+const (
+	BidsStatusPending  BidStatus = "pending"
+	BidsStatusRejected BidStatus = "rejected"
+	BidsStatusAccepted BidStatus = "accepted"
 )

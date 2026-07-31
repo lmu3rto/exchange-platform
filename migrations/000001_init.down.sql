@@ -10,5 +10,18 @@ DROP FUNCTION IF EXISTS fnc_archive_user_on_delete() CASCADE;
 DROP FUNCTION IF EXISTS fnc_check_task_status_update() CASCADE;
 
 
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS deleted_users CASCADE;
+DROP TABLE IF EXISTS users;
+
+DROP TABLE IF EXISTS deleted_users;
+
+DROP TABLE IF EXISTS customers;
+
+DROP TABLE IF EXISTS executors;
+
+DROP TABLE IF EXISTS tasks;
+
+DROP TABLE IF EXISTS bids;
+
+DROP TABLE IF EXISTS transactions;
+
+DROP TABLE IF EXISTS wallet_transactions;

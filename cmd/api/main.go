@@ -11,14 +11,13 @@ import (
 	"github.com/lmu3rto/exchange-platform/internal/service"
 )
 
-
 func main() {
 	databaseURL := os.Getenv("DATABASE_URL")
 
 	if databaseURL == "" {
 		log.Fatal("DATABASE_URL is not set")
 	}
-	
+
 	db, err := database.New(databaseURL)
 
 	if err != nil {
@@ -27,11 +26,9 @@ func main() {
 
 	defer db.Close()
 
-
 	userRepo := repository.NewUserRepository(db)
 
 	userService := service.NewUserService(userRepo)
-
 
 	h := handler.NewHandler(userService)
 

@@ -1,10 +1,9 @@
-package repository
+package service
 
 import (
-  "github.com/lmu3rto/exchange-platform/internal/domain/models"
 	"context"
+	"github.com/lmu3rto/exchange-platform/internal/domain/models"
 )
-
 
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) (*models.User, error)

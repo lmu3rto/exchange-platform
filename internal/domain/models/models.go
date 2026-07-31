@@ -1,21 +1,24 @@
 package models
 
-import "time"
+import (
+	"github.com/shopspring/decimal"
+	"time"
+)
 
 type User struct {
-	ID        int64     `json:"id"`
-	UserName  string    `json:"user_name"`
-	Balance   float64   `json:"balance"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
+	ID        int64           `json:"id"`
+	UserName  string          `json:"user_name"`
+	Balance   decimal.Decimal `json:"balance"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
+	DeletedAt *time.Time      `json:"deleted_at"`
 }
 
 type DeletedUser struct {
-	ID        int64     `json:"id"`
-	Name      string    `json:"user_name"`
-	Balance   float64   `json:"balance"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        int64      `json:"id"`
+	Name      string     `json:"user_name"`
+	Balance   float64    `json:"balance"`
+	CreatedAt time.Time  `json:"created_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
 }
 
@@ -37,7 +40,7 @@ type Task struct {
 	Description   string     `json:"description"`
 	Status        TaskStatus `json:"status"`
 	AcceptedBidID int64      `json:"accepted_bid_id"`
-	Deadline      *time.Time  `json:"deadline"`
+	Deadline      *time.Time `json:"deadline"`
 	CreatedAt     time.Time  `json:"created_at"`
 	UpdatedAt     time.Time  `json:"updated_at"`
 }
