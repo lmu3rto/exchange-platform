@@ -1,14 +1,22 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/lmu3rto/exchange-platform/internal/database"
 	"github.com/lmu3rto/exchange-platform/internal/handler"
 	"github.com/lmu3rto/exchange-platform/internal/repository"
 	"github.com/lmu3rto/exchange-platform/internal/service"
+)
+
+var (
+	ReadTimeout  = 5 * time.Second
+	WriteTimeout = 15 * time.Second
+	IdleTimeout  = 120 * time.Second
 )
 
 func main() {
@@ -34,8 +42,19 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("POST /users", h.Create)
+	handler.NewRouter(h)
 
-	http.ListenAndServe(":8080", mux)
+	srv := &http.Server{
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  ReadTimeout,
+		WriteTimeout: WriteTimeout,
+		IdleTimeout:  IdleTimeout,
+	}
+
+	if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
+		log.Printf("server failed: %v", err)
+		return
+	}
 
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -37,14 +38,11 @@ func userScan(row pgx.Row) (*models.User, error) {
 	)
 
 	if err != nil {
-
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrUserNotFound
 		}
-
-		return nil, err
+		return nil, fmt.Errorf("scan repository create: %w", err)
 	}
-
 	return &user, nil
 }
 
@@ -117,16 +115,10 @@ func (r *UserRepository) Update(ctx context.Context, user *models.User) (*models
 
 func (r *UserRepository) Delete(ctx context.Context, user *models.User) (*models.User, error) {
 	query := `
-		DELETE
-		FROM users
+		UPDATE users
+		SET deleted_at = NOW()
 		WHERE id = $1
-		RETURNING 
-	    id,
-    	user_name,
-    	balance,
-    	created_at,
-    	updated_at,
-    	deleted_at
+		RETURNING deleted_at
 	`
 	return userScan(r.db.QueryRow(ctx, query, user.ID))
 }

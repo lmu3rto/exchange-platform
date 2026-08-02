@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/lmu3rto/exchange-platform/internal/domain/models"
 )
 
