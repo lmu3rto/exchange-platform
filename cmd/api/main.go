@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -34,15 +35,15 @@ func main() {
 
 	defer db.Close()
 
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	userRepo := repository.NewUserRepository(db)
 
 	userService := service.NewUserService(userRepo)
 
-	h := handler.NewHandler(userService)
+	h := handler.NewHandler(userService, logger)
 
-	mux := http.NewServeMux()
-
-	handler.NewRouter(h)
+	mux := handler.NewRouter(h)
 
 	srv := &http.Server{
 		Addr:         ":8080",

@@ -1,4 +1,4 @@
-package service
+package contracts
 
 import (
 	"context"
@@ -11,5 +11,5 @@ type UserRepository interface {
 	GetByID(ctx context.Context, id int64) (*models.User, error)
 	GetByName(ctx context.Context, name string) (*models.User, error)
 	Update(ctx context.Context, user *models.User) (*models.User, error)
-	Delete(ctx context.Context, user *models.User) (*models.User, error)
+	Delete(ctx context.Context, id int64) (*models.User, error)
 }

@@ -1,15 +1,19 @@
 package handler
 
 import (
-	"github.com/lmu3rto/exchange-platform/internal/service"
+	"log/slog"
+
+	"github.com/lmu3rto/exchange-platform/internal/service/contracts"
 )
 
 type Handler struct {
-	userService service.UserRepository
+	userService contracts.UserRepository
+	logger      *slog.Logger
 }
 
-func NewHandler(us service.UserRepository) *Handler {
+func NewHandler(us contracts.UserRepository, logger *slog.Logger) *Handler {
 	return &Handler{
 		userService: us,
+		logger:      logger,
 	}
 }

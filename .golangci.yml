@@ -10,7 +10,6 @@ linters:
     - bodyclose
     - contextcheck
     - dogsled
-    - dupl
     - dupword
     - err113
     - errcheck

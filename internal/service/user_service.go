@@ -4,17 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/lmu3rto/exchange-platform/internal/domain/models"
-	"github.com/lmu3rto/exchange-platform/internal/repository"
+	"github.com/lmu3rto/exchange-platform/internal/service/contracts"
 )
 
 type UserService struct {
-	repo UserRepository
+	repo contracts.UserRepository
 }
 
-func NewUserService(r UserRepository) *UserService {
+func NewUserService(r contracts.UserRepository) *UserService {
 	return &UserService{
 		repo: r,
 	}
@@ -22,6 +21,7 @@ func NewUserService(r UserRepository) *UserService {
 
 var (
 	ErrUserAlreadyExists = errors.New("User already exists")
+	ErrUserNotFound      = errors.New("user not found")
 )
 
 func wrap(s string, err error) error {
@@ -33,9 +33,9 @@ func wrap(s string, err error) error {
 
 func (s *UserService) Create(ctx context.Context, user *models.User) (*models.User, error) {
 
-	name, err := s.repo.GetByName(ctx, strings.TrimSpace(user.UserName))
+	name, err := s.repo.GetByName(ctx, user.UserName)
 
-	if name != nil && !errors.Is(err, repository.ErrUserNotFound) {
+	if name != nil && !errors.Is(err, ErrUserNotFound) {
 		return nil, ErrUserAlreadyExists
 	}
 
@@ -45,7 +45,12 @@ func (s *UserService) Create(ctx context.Context, user *models.User) (*models.Us
 }
 
 func (s *UserService) GetByID(ctx context.Context, id int64) (*models.User, error) {
+
 	res, err := s.repo.GetByID(ctx, id)
+
+	if res.ID == 0 && errors.Is(err, ErrUserNotFound) {
+		return nil, ErrUserNotFound
+	}
 
 	return res, wrap("get by id", err)
 }
@@ -58,13 +63,20 @@ func (s *UserService) GetByName(ctx context.Context, name string) (*models.User,
 }
 
 func (s *UserService) Update(ctx context.Context, user *models.User) (*models.User, error) {
+
+	ex, err := s.repo.GetByName(ctx, user.UserName)
+
+	if ex != nil && !errors.Is(err, ErrUserNotFound) {
+		return nil, ErrUserAlreadyExists
+	}
+
 	res, err := s.repo.Update(ctx, user)
 
 	return res, wrap("update", err)
 }
 
-func (s *UserService) Delete(ctx context.Context, user *models.User) (*models.User, error) {
-	res, err := s.repo.Delete(ctx, user)
+func (s *UserService) Delete(ctx context.Context, id int64) (*models.User, error) {
+	res, err := s.repo.Delete(ctx, id)
 
 	return res, wrap("delete", err)
 }

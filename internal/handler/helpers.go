@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
+
+	"github.com/lmu3rto/exchange-platform/internal/validator"
 )
 
 type ErrorResponse struct {
@@ -19,7 +21,7 @@ func decodeJSON(r *http.Request, dst any) error {
 
 	if err := decoder.Decode(dst); err != nil {
 		if errors.Is(err, io.EOF) {
-			return ErrBodyEmpty
+			return validator.ErrBodyEmpty
 		}
 		return fmt.Errorf("decode json %w", err)
 	}
@@ -45,6 +47,6 @@ func writeError(w http.ResponseWriter, message string, status int) {
 	})
 
 	if err != nil {
-		log.Printf("failed to encode error response: %v", err)
+		slog.Error("failed to encode error response", "error", err)
 	}
 }
