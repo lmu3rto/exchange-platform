@@ -8,10 +8,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/lmu3rto/exchange-platform/internal/database"
-	"github.com/lmu3rto/exchange-platform/internal/handler"
-	"github.com/lmu3rto/exchange-platform/internal/repository"
-	"github.com/lmu3rto/exchange-platform/internal/service"
+	_ "github.com/lmu3rto/exchange-platform/docs"
+	"github.com/lmu3rto/exchange-platform/internal/app"
+	"github.com/lmu3rto/exchange-platform/internal/config"
 )
 
 var (
@@ -20,34 +19,33 @@ var (
 	IdleTimeout  = 120 * time.Second
 )
 
+// @title Exchange Platform API
+// @version 1.0
+// @description API биржи фриланса.
+// @host localhost:8080
+// @BasePath /
 func main() {
-	databaseURL := os.Getenv("DATABASE_URL")
 
-	if databaseURL == "" {
-		log.Fatal("DATABASE_URL is not set")
-	}
-
-	db, err := database.New(databaseURL)
+	cfg, err := config.Load()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
-
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	userRepo := repository.NewUserRepository(db)
+	mux, err := app.New(cfg, logger)
 
-	userService := service.NewUserService(userRepo)
+	if err != nil {
+		logger.Error("failed to connect db", "error", err)
+		return
+	}
 
-	h := handler.NewHandler(userService, logger)
-
-	mux := handler.NewRouter(h)
+	defer mux.DB.Close()
 
 	srv := &http.Server{
-		Addr:         ":8080",
-		Handler:      mux,
+		Addr:         cfg.HttpAddr,
+		Handler:      mux.Handler,
 		ReadTimeout:  ReadTimeout,
 		WriteTimeout: WriteTimeout,
 		IdleTimeout:  IdleTimeout,

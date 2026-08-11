@@ -1,0 +1,451 @@
+basePath: /
+definitions:
+  dto.CreateUserRequest:
+    properties:
+      user_name:
+        type: string
+    type: object
+  dto.CreateUserResponse:
+    properties:
+      created_at:
+        type: string
+      user_name:
+        type: string
+    type: object
+  dto.DeleteResponse:
+    properties:
+      deleted_at:
+        type: string
+      user_name:
+        type: string
+    type: object
+  dto.GetByIDResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      user_name:
+        type: string
+    type: object
+  dto.GetByNameResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      user_name:
+        type: string
+    type: object
+  dto.UpdateRequest:
+    properties:
+      user_name:
+        type: string
+    type: object
+  dto.UpdateResponse:
+    properties:
+      user_name:
+        type: string
+    type: object
+  handler.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.Customer:
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.Executor:
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API биржи фриланса.
+  title: Exchange Platform API
+  version: "1.0"
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user
+      parameters:
+      - description: Create user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Create user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      description: Deletes a user by ID
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Delete user
+      tags:
+      - users
+    get:
+      description: Returns a user by ID
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Updates user's username
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Update user
+      tags:
+      - users
+  /users/{id}/customer:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes customer role from the specified user
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Customer not found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Delete customer
+      tags:
+      - customer
+    get:
+      consumes:
+      - application/json
+      description: Returns customer by user ID
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Customer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Customer not found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get customer
+      tags:
+      - customer
+    post:
+      consumes:
+      - application/json
+      description: Creates an customer role for the specified user
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Customer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "409":
+          description: Customer already exists
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Create customer
+      tags:
+      - customer
+  /users/{id}/executor:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes executor role from the specified user
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Executor not found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Delete executor
+      tags:
+      - executors
+    get:
+      consumes:
+      - application/json
+      description: Returns executor by user ID
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Executor'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Executor not found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get executor
+      tags:
+      - executors
+    post:
+      consumes:
+      - application/json
+      description: Creates an executor role for the specified user
+      parameters:
+      - description: User ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Executor'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "409":
+          description: Executor already exists
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Create executor
+      tags:
+      - executors
+  /users/name:
+    get:
+      description: Returns a user by username
+      parameters:
+      - description: Username
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetByNameResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get user by name
+      tags:
+      - users
+swagger: "2.0"

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/lmu3rto/exchange-platform/internal/domain/errs"
 	"github.com/lmu3rto/exchange-platform/internal/domain/models"
 	"github.com/lmu3rto/exchange-platform/internal/service/contracts"
 )
@@ -19,11 +20,6 @@ func NewUserService(r contracts.UserRepository) *UserService {
 	}
 }
 
-var (
-	ErrUserAlreadyExists = errors.New("User already exists")
-	ErrUserNotFound      = errors.New("user not found")
-)
-
 func wrap(s string, err error) error {
 	if err != nil {
 		return fmt.Errorf("user service %s: - %w", s, err)
@@ -35,8 +31,8 @@ func (s *UserService) Create(ctx context.Context, user *models.User) (*models.Us
 
 	name, err := s.repo.GetByName(ctx, user.UserName)
 
-	if name != nil && !errors.Is(err, ErrUserNotFound) {
-		return nil, ErrUserAlreadyExists
+	if name != nil && !errors.Is(err, errs.ErrUserNotFound) {
+		return nil, errs.ErrUserAlreadyExists
 	}
 
 	res, err := s.repo.Create(ctx, user)
@@ -48,8 +44,12 @@ func (s *UserService) GetByID(ctx context.Context, id int64) (*models.User, erro
 
 	res, err := s.repo.GetByID(ctx, id)
 
-	if res.ID == 0 && errors.Is(err, ErrUserNotFound) {
-		return nil, ErrUserNotFound
+	if res == nil {
+		return nil, err
+	}
+
+	if res.ID == 0 && errors.Is(err, errs.ErrUserNotFound) {
+		return nil, errs.ErrUserNotFound
 	}
 
 	return res, wrap("get by id", err)
@@ -66,8 +66,8 @@ func (s *UserService) Update(ctx context.Context, user *models.User) (*models.Us
 
 	ex, err := s.repo.GetByName(ctx, user.UserName)
 
-	if ex != nil && !errors.Is(err, ErrUserNotFound) {
-		return nil, ErrUserAlreadyExists
+	if ex != nil && !errors.Is(err, errs.ErrUserNotFound) {
+		return nil, errs.ErrUserAlreadyExists
 	}
 
 	res, err := s.repo.Update(ctx, user)

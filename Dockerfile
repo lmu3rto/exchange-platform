@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY go.mod go.sum ./
 
-RUN go mod download
-
 COPY . .
 
 RUN go build -o api ./cmd/api
@@ -16,7 +14,8 @@ WORKDIR /app
 
 COPY --from=builder /app/api .
 
+COPY --from=builder /app/docs ./docs 
+
 EXPOSE 8080
 
 CMD ["./api"]
-

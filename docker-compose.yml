@@ -1,26 +1,33 @@
+version: '3.8'
 
 services:
   backend:
     build: .
-
+    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
-    - "8080:8080"
-
+      - "8080:8080"
     depends_on:
       migration:
         condition: service_completed_successfully
     environment:
       DATABASE_URL: postgres://mu3rto:platform_password@database:5432/exchange_platform?sslmode=disable
     restart: unless-stopped
-  migration:
-    image: migrate/migrate    
-    command: -path=migrations -database postgres://mu3rto:platform_password@database:5432/exchange_platform?sslmode=disable up
 
+  migration:
+    image: migrate/migrate
+    command:
+      - -path=migrations
+      - -database
+      - postgres://mu3rto:platform_password@database:5432/exchange_platform?sslmode=disable
+      - up
     volumes:
       - ./migrations:/migrations
     depends_on:
       database:
         condition: service_healthy
+
   database:
     image: postgres:18-alpine
     environment:

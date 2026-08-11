@@ -2,17 +2,13 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/lmu3rto/exchange-platform/internal/domain/errs"
 	"github.com/lmu3rto/exchange-platform/internal/domain/models"
-)
-
-var (
-	ErrUserNotFound = errors.New("user not found")
 )
 
 type UserRepository struct {
@@ -38,10 +34,10 @@ func userScan(row pgx.Row) (*models.User, error) {
 	)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrUserNotFound
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errs.ErrUserNotFound
 		}
-		return nil, fmt.Errorf("scan user repository: %w", err)
+		return nil, fmt.Errorf("failed scan user repository: %w", err)
 	}
 	return &user, nil
 }
